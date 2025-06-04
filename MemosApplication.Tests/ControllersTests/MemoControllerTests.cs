@@ -45,8 +45,55 @@ public class MemoControllerTests
         });
         
     }
-    
+
     [Test]
+    public void CreateMemo_ReturnsCreatedResult()
+    {
+        //Arrange 
+        var newMemo = new CreateMemoDto
+        {
+            Title = "New memo",
+            Content = "I am a new memo with new content."
+        };
+        
+        //Act
+        var response = _controller.CreateMemo(newMemo);
+        
+        // Assert
+        Assert.That(response, Is.InstanceOf<CreatedAtActionResult>());
+        var createdResult = response as CreatedAtActionResult;
+
+        var createdMemo = _context.Memos.FirstOrDefault(memo => memo.Title == newMemo.Title);
+        
+        Assert.Multiple(() =>
+        {
+            Assert.That(createdResult, Is.Not.Null);
+            Assert.That(createdMemo.Title, Is.EqualTo(newMemo.Title));
+            Assert.That(createdMemo.Content, Is.EqualTo(newMemo.Content));
+        });
+    }
+
+    [Test]
+    public void CreateMemo_WithInvalidModelState_ReturnsBadRequest()
+    {
+        // Arrange
+        var newMemo = new CreateMemoDto
+        {
+            Title = "",
+            Content = ""
+        };
+        
+        //Act
+        _controller.ModelState.AddModelError("Title", "Title is required.");
+        _controller.ModelState.AddModelError("Content", "Content is required.");
+        var response = _controller.CreateMemo(newMemo);
+        
+        //Assert 
+        Assert.That(response, Is.InstanceOf<BadRequestObjectResult>());
+        var badRequestResult = response as BadRequestObjectResult;
+        Assert.That(badRequestResult, Is.Not.Null);
+        Assert.That(badRequestResult.Value, Is.TypeOf<SerializableError>());
+    }
     
     [TearDown]
     public void TearDown()

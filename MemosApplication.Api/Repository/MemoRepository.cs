@@ -42,7 +42,11 @@ public class MemoRepository : IMemoRepository
 
   public void UpdateMemo(UpdateMemoDto memo, int id)
   {
-    var availableMemo = _memo;
+    var availableMemo = _context.Memos.FirstOrDefault(m => m.Id == id);
+    if (availableMemo  == null)
+    {
+      throw new KeyNotFoundException("Memo not found");
+    }
 
     if (memo.Title != null)
     {
@@ -67,6 +71,7 @@ public class MemoRepository : IMemoRepository
       throw new KeyNotFoundException("Memo not found");
     }
     _context.Memos.Remove(availableMemo);
+    _context.SaveChanges();
   }
 
 }

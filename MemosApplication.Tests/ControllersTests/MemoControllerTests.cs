@@ -117,6 +117,19 @@ public class MemoControllerTests
             Assert.That(updatedMemo.Title, Is.EqualTo(updateMemo.Title));
             Assert.That(updatedMemo.Content, Is.EqualTo(updateMemo.Content));
         });
+    }
+    
+    [Test]
+    public void DeleteMemo_ReturnsNoContentResult()
+    {
+        //Act
+        var response = _controller.DeleteMemo(1);
+        var deletedMemo = _context.Memos.FirstOrDefault(memo => memo.Id == 1);
+        
+        Assert.That(deletedMemo, Is.Null);
+        
+        //Assert
+        Assert.That(response, Is.InstanceOf<NoContentResult>());
         
     }
     

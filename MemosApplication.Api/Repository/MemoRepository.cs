@@ -15,6 +15,7 @@ public interface IMemoRepository
 public class MemoRepository : IMemoRepository
 {
   private readonly AppDbContext _context;
+  private static Memo _memo { get; set; }
 
   public MemoRepository(AppDbContext context)
   {
@@ -27,16 +28,21 @@ public class MemoRepository : IMemoRepository
     _context.Memos.Add(memo);
     _context.SaveChanges();
   }
-  
-  public Memo? GetMemoById(int id) => _context.Memos.FirstOrDefault(m => m.Id == id);
+
+  public Memo GetMemoById(int id)
+  {
+    var _memo = _context.Memos.FirstOrDefault(m => m.Id == id);
+    if (_memo == null)
+    {
+      throw new KeyNotFoundException("Memo not found");
+    }
+
+    return _memo;
+  }
 
   public void UpdateMemo(UpdateMemoDto memo, int id)
   {
-    var availableMemo = _context.Memos.FirstOrDefault(m => m.Id == id);
-    if (availableMemo == null)
-    {
-      throw new Exception("Memo not found");
-    }
+    var availableMemo = _memo;
 
     if (memo.Title != null)
     {
@@ -58,7 +64,7 @@ public class MemoRepository : IMemoRepository
     var availableMemo = _context.Memos.FirstOrDefault(m => m.Id == id);
     if (availableMemo == null)
     {
-      throw new Exception("Memo not found");
+      throw new KeyNotFoundException("Memo not found");
     }
     _context.Memos.Remove(availableMemo);
   }

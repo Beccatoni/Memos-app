@@ -64,6 +64,7 @@ public class MemoControllerTests
         var createdResult = response as CreatedAtActionResult;
 
         var createdMemo = _context.Memos.FirstOrDefault(memo => memo.Title == newMemo.Title);
+        Assert.That(createdMemo, Is.Not.Null);
         
         Assert.Multiple(() =>
         {
@@ -93,6 +94,30 @@ public class MemoControllerTests
         var badRequestResult = response as BadRequestObjectResult;
         Assert.That(badRequestResult, Is.Not.Null);
         Assert.That(badRequestResult.Value, Is.TypeOf<SerializableError>());
+    }
+
+    [Test]
+    public void UpdateMemo_ReturnsOkResult()
+    {
+        //Arrange
+        var updateMemo = new UpdateMemoDto
+        {
+            Title = "Updated memo",
+            Content = "I am an updated memo with updated content."
+        };
+        
+        //Act
+        var response = _controller.UpdateMemo(1, updateMemo);
+        var updatedMemo = _context.Memos.FirstOrDefault(memo => memo.Id == 1);
+        Assert.That(updatedMemo, Is.Not.Null);
+        //Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(response, Is.InstanceOf<NoContentResult>());
+            Assert.That(updatedMemo.Title, Is.EqualTo(updateMemo.Title));
+            Assert.That(updatedMemo.Content, Is.EqualTo(updateMemo.Content));
+        });
+        
     }
     
     [TearDown]

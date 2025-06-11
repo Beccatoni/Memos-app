@@ -49,13 +49,13 @@ public class MemoService : IMemoService
 
     public void UpdateMemo(UpdateMemoDto memo, int id)
     {
-        if (memo == null)
-        {
-            throw new ArgumentNullException(nameof(memo), "The memo update data cannot be null.");
-        }
-
+        
         try
         {
+            if (memo == null)
+            {
+                throw new ArgumentNullException(nameof(memo), "The memo update data cannot be null.");
+            }
             _repository.UpdateMemo(memo, id);
         }
         catch (Exception e)
@@ -71,6 +71,7 @@ public class MemoService : IMemoService
         {
             throw new KeyNotFoundException("No memo found with the given ID.");
         }
+        
         _repository.DeleteMemo(id);
     }
 }

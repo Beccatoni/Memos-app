@@ -21,7 +21,7 @@ builder.Services.AddScoped<IMemoRepository, MemoRepository>();
 
 //Register the database context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("MemosDb")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("MemoDb")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
